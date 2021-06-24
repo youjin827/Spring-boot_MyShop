@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mini01team02.user.model.CartDAO">
+	
+
+<!-- 장바구니 넣기  -->
+ 
+<insert id="InsertList" parameterType="CartVO">
+insert into cart (productId,title,price,count,money,color) 
+select productId,title,price,count,price*count as money,color 
+from product where productId=#{productId}
+</insert>
+
+
+
+<!--  장바구니 조회  -->
+<select id="CartList" resultType="CartVO">
+
+SELECT productId, MAX(title) title, MAX(price) price, COUNT(productId) count, price*count(productId) money
+ FROM cart
+GROUP BY productId
+
+</select>
+
+
+<!-- select u.email, p.title, p.price, c.count, (p.price*c.count) as money
+	from user_t u left join cart c on u.email = c.email 
+	join product p on p.productId = c.productId -->
+<!-- 총 가격 -->
+
+
+<delete id="CartDelete" parameterType="int">
+delete from cart where productId=#{productId}
+</delete>
+
+</mapper>
