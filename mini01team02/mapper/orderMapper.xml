@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mini01team02.user.model.OrderDAO">
+
+
+    <insert id="insertOrder" parameterType="OrderVO">  <!--  resultType 생략시 int가 return -->
+		insert into `order`(username,email,size,qty,addr1,addr2,addr3,tel,price,date)
+		values(#{username},#{email},#{size},#{qty},#{addr1},#{addr2},#{addr3},#{tel},#{price},#{date})
+	</insert>
+
+
+
+</mapper>

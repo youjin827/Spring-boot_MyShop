@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mini01team02.analysis.model.ProductanalysisDAO">
+
+<!-- 상품(분석용) DB insert -->
+<insert id="insertProductAnalysis" parameterType="ProductanalysisVO">
+
+		insert into productanalysis(productId, title, gender, age, regdate)
+		select productId, title, b.gender, b.age ,now()
+		from
+		(select gender, age, userId
+		from user_t) as b, product as a
+		where a.productId = #{productId} and b.userId= #{userId}
+
+
+</insert>
+
+<insert id="insertProductAnalysistest" parameterType="ProductanalysisVO">
+
+	insert into productanalysis(productId,title,gender,age,regdate)
+	values(#{productId},#{title},#{gender},#{age},now())
+
+</insert>
+
+</mapper>

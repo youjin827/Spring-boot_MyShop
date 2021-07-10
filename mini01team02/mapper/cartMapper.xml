@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mini01team02.user.model.CartDAO">
+	
+	
+<!-- 장바구니 넣기  -->
+ 
+<insert id="InsertList" parameterType="CartVO">
+insert into cart (product_productId,title,price,count,money,user_t_userId,size,color) 
+select a.productId,a.title,a.price,count,price*count as money,b.userId,size,a.color 
+from product as a, user_t as b where a.productId=#{productId} and b.userId=#{userId}
+</insert>
+
+
+
+<!--  장바구니 조회  -->
+<select id="CartList" resultType="CartVO">
+
+SELECT product_productId, MAX(title) title, MAX(price) price, COUNT(product_productId) count, price*count(product_productId) money, b.userId userId
+ FROM cart, user_t as b
+ where user_t_userId = b.userId
+GROUP BY product_productId
+
+</select>
+
+
+
+
+<delete id="CartDelete" parameterType="int">
+delete from cart where product_productId=#{productId}
+</delete>
+
+
+<insert id="insertCart" parameterType="CartVO">
+	 <selectKey keyProperty="user_t_userId,product_productId" resultType="hashmap" order="BEFORE">
+	 	select a.userId as user_t_userId, b.productId as product_productId
+	 	from user_t as a, product as b
+	 	where a.userId=#{userId} and b.productId=#{productId}
+	 </selectKey>
+	insert into cart(user_t_userId,product_productId,amount,size)
+	values
+	(#{user_t_userId},#{product_productId},#{amount},#{size})
+</insert>
+
+<select id="cartList2" resultType="CartVO">
+select  b.cartId, b.product_productId, a.userId, c.title, sum(b.amount) as count,c.price, b.size,
+(c.price * count(b.amount)) as money
+from cart b
+left join user_t a
+on a.userId=b.user_t_userId
+inner join product c
+on b.product_productId = c.productId
+where b.user_t_userId = #{userId}
+group by product_productId;
+ 
+	
+</select>
+
+</mapper>

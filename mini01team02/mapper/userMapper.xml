@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mini01team02.user.model.UserDAO">
+	
+	<!-- 로그인 -->
+	<select id="getLoginInfo" parameterType="String" resultType="UserVO"> 	
+	SELECT *
+	 FROM user_t
+	WHERE email = #{email}
+	</select>
+	
+	<!-- 회원가입 -->
+	<insert id="insertUser" parameterType="UserVO">   <!-- resultType 생략시 int가 return -->
+		insert into user_t(email,userName,pass,con_pass,tel,age,gender,regdate)
+			values(#{email},#{username},#{pass},#{con_pass},#{tel},#{age},#{gender},now())
+	</insert>
+	
+		<!-- 아이디체크 -->
+	<select id="idCheck" parameterType="String" resultType="Integer">
+        SELECT count(*)
+        FROM user_t
+        WHERE email = #{email}
+    </select>
+
+</mapper>

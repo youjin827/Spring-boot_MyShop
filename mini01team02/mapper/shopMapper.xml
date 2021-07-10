@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mini01team02.user.model.ShopDAO">
+      
+       <resultMap type="CommonVO" id="CommonVO">
+     	  <id property="fno" column="fno"/>
+     	  <result property="fileName" column="filename"/>
+     	  <result property="saveFile" column="savefile"/>
+     	  <result property="fileUrl" column="fileUrl"/>
+       </resultMap>
+     
+      <resultMap type="ShopVO" id="shopMap">
+         <id property="num" column="num"/>
+         <result property="productId" column="productId"/>
+         <result property="title" column="title"/>
+         <result property="price" column="price"/>
+         <result property="img" column="img"/>      
+         <result property="comment" column="comment"/>
+         <result property="brand" column="brand"/>   
+         <result property="content" column="content"/>   
+         <result property="color" column="color"/>      
+         <result property="recnt" column="recnt"/>
+         <result property="staravg" column="staravg"/>
+         <result property="star" column="star"/>
+        
+
+       <!--  <collection property="productId" resultMap="CommonVO" ofType="Post"/> -->     
+      </resultMap>
+
+<select id="categorySelect1"  resultType="ShopVO">
+   select * from category_1
+</select>
+
+<select id="categorySelect2" parameterType="int" resultType="ShopVO">
+   select * from category_2 as a left join category_1 as b on a.catenum = b.num
+</select>
+
+<select id="categorySelect3" parameterType="int" resultType="ShopVO">
+   select * from category_3 as a left join category_2 as b on a.catenum = b.num
+</select>
+
+
+	<!-- 상품리스트 화면 출력 -->
+    <select id="shopList" parameterType="ShopVO" resultType="ShopVO">
+		select a.productId as productId, b.fileName as filename, a.title as title, 
+		a.price as price, sum(c.star)/count(c.productId) as star 
+		from
+		product as a
+		left join `file` as b
+		on
+		a.productId = b.productId
+		left join reply as c
+		on a.productId = c.productId
+		group by a.productId
+		order by a.productId asc
+        limit #{stRow} , #{enRow}
+    </select>
+    
+    <select id="shopCount" parameterType="PageObj" resultType="int"> 
+      select count(*) 
+         from product
+     </select>
+
+
+   <select id="getproductList1" parameterType="PageObj" resultMap="shopMap"> 
+		select d.num, a.productId, b.fileName, a.title, a.price, sum(c.star)/count(c.productId) as star 
+		from
+		product as a
+		left join `file` as b
+		on
+		a.productId = b.productId
+		left join reply as c
+		on a.productId = c.productId
+		left join category_1 as d
+		on a.category_1_num = d.num
+		where d.num=#{num}
+		group by a.productId
+		order by a.productId asc
+        limit #{stRow} , #{enRow}
+   </select>
+   
+   <select id="getproductList1count" parameterType="PageObj" resultType="int"> 
+      select count(*) 
+         from product as a
+         join category_1 as b
+         on
+         b.num=a.category_1_num
+         where
+         b.num = #{num}
+   </select>
+   
+      <select id="getproductList2" parameterType="PageObj" resultMap="shopMap"> 
+		select d.num, a.productId, b.fileName, a.title, a.price, sum(c.star)/count(c.productId) as star 
+		from
+		product as a
+		left join `file` as b
+		on
+		a.productId = b.productId
+		left join reply as c
+		on a.productId = c.productId
+		left join category_2 as d
+		on a.category_2_num = d.num
+		where d.num=#{num}
+		group by a.productId
+		order by a.productId asc
+        limit #{stRow} , #{enRow}
+   </select>
+   
+   <select id="getproductList2count" parameterType="PageObj" resultType="int"> 
+      select count(*) 
+         from product as a
+         join category_2 as b
+         on
+         b.num=a.category_2_num
+         where
+         b.num = #{num}
+   </select>
+
+      <select id="getproductList3" parameterType="PageObj" resultMap="shopMap"> 
+		select d.num, a.productId, b.fileName, a.title, a.price, sum(c.star)/count(c.productId) as star 
+		from
+		product as a
+		left join `file` as b
+		on
+		a.productId = b.productId
+		left join reply as c
+		on a.productId = c.productId
+		left join category_3 as d
+		on a.category_3_num = d.num
+		where d.num=#{num}
+		group by a.productId
+		order by a.productId asc
+         limit #{stRow} , #{enRow}
+   </select>
+
+   <select id="getProductList3count" parameterType="PageObj" resultType="int">
+      select count(*)
+      from product as a
+         join category_3 as b
+         on
+         b.num=a.category_3_num
+         where
+         b.num = #{num}
+   </select>
+   
+	   <select id="getproduct" parameterType="integer" resultMap="shopMap">
+	  select a.productId, title, price, comment, brand, content, color, COUNT(b.productId) as recnt, avg(b.star) as staravg
+	  from product as a
+	  left join
+	  reply as b
+	  on
+	  a.productId = b.productId
+	  where 
+	  a.productId = #{productId}  
+	   </select>
+
+   
+   <select id="getPurchase" parameterType="ShopVO" resultMap="shopMap">
+    <!-- resultMap="GoodsMap"으로 바꿔줌 -->
+		SELECT productId, title, price, sum(price) as total
+		FROM product
+		where productId = #{productId}
+    </select>
+   
+</mapper>

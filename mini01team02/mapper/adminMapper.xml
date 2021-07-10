@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mini01team02.admin.model.AdminDAO">
+	
+	<resultMap type="mini01team02.user.model.ContactVO" id="contactMap">
+		<id property="username" column="username"/>
+		<result property="email" column="email"/>
+		<result property="title" column="title"/>
+		<result property="content" column="content"/>		
+	</resultMap>
+	
+	
+	<!-- 로그인 -->
+	<select id="getAdmingInfo" parameterType="String" resultType="AdminVO"> 	
+	SELECT *
+	 FROM user_t
+	WHERE adminEmail = #{adminEmail}
+	</select>
+	
+	<!-- 회원가입 -->
+	<insert id="insertAdmin" parameterType="AdminVO">   <!-- resultType 생략시 int가 return -->
+		insert into user_t(email,userName,pass,con_pass)
+			values(#{adminEmail},#{adminName},#{adminPass},#{adminCon_pass})
+	</insert>
+	
+		<!-- 문의 리스트 뿌리기 -->
+    <select id="getContactList" parameterType="ContactVO" resultMap="contactMap">
+    <!-- resultMap="BoardMap"으로 바꿔줌 -->
+      select username, email, title, regdate
+      from content
+    </select>
+    
+     <!-- 주문 리스트 -->
+	<select id="getOrderList" parameterType="AdminVO" resultType="AdminVO">
+		select * 
+		from `order` 
+		order by orderId asc 
+		limit #{stRow},#{edRow} <!-- 한 페이지 당 보여줄 게시글 개수 -->
+		
+	</select>
+	<!-- 페이지 카운트 -->
+	<select id="paging" parameterType = "AdminVO" resultType="int">
+	select count(*) from `order`
+	
+	</select>
+    
+  
+	
+	
+	
+
+</mapper>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mini01team02.common.model.SearchDAO">
+
+<!-- 검색기능테스트 -->
+<insert id="searchInsert" parameterType="SearchVO">
+ insert into searchanalysis(title,gender,age,regdate,searchtotal)
+select #{q}, b.gender, b.age, now(), count(a.title)
+from
+(select a.productId as productId, b.fileName as filename, a.title as title,
+a.price as price, sum(c.star) / count(c.productId) as star
+from
+product as a
+left join `file` as b
+on
+a.productId = b.productId
+left join reply as c
+on a.productId = c.productId
+where
+((a.title like concat('%',#{q},'%')))
+group by a.productId ) as a, user_t as b
+where b.userid=#{userId};
+
+</insert>
+
+<insert id="searchInsertLogin" parameterType="SearchVO">
+      insert into searchanalysis (seachid, title, regdate)
+      values(#{serchid}, #{q}, now())
+</insert>
+
+
+<!-- 0701 -->
+<select id='searchProduct' parameterType="ShopVO" resultType="ShopVO"> 
+select a.productId as productId, b.fileName as filename, a.title as title, 
+      a.price as price, sum(c.star)/count(c.productId) as star 
+      from
+      product as a
+      left join `file` as b
+      on
+      a.productId = b.productId
+      left join reply as c
+      on a.productId = c.productId
+      where
+      ((a.title like concat('%',#{q},'%'))) or ((a.content like concat('%',#{q},'%')))
+       group by a.productId
+      order by a.productId desc
+       limit #{stRow} , #{enRow}
+     
+</select>
+
+<select id="searchProductCount" parameterType="PageObj" resultType="int"> 
+      select count(*) 
+         from product 
+     where
+      ((title like concat('%',#{q},'%'))) or ((content like concat('%',#{q},'%')))
+   </select>
+
+</mapper>

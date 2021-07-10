@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mini01team02.admin.model.ProductDAO">
+
+<!-- 상품 등록 -->
+	<insert id="insertProduct" parameterType="ProductVO">
+    INSERT INTO product
+		(
+		`title`,
+		`price`,
+		`content`,
+		`color`,
+		`brand`,
+		`img`,
+		`multi_img`,
+		`date`,
+		`category_1_num`,
+		`category_2_num`,
+		`category_3_num`
+		)
+		VALUES
+		(
+		#{title},
+		#{price},
+		#{content},
+		#{color},
+		#{brand},
+		#{img},
+		#{multi_img},
+		#{date},
+		#{category_1_num},
+		#{category_2_num},
+		#{category_3_num}
+		)
+    </insert>
+
+<!-- 상품 조회 -->
+	<select id="getProductList" resultType="ProductVO" >
+		select * from product
+	</select>
+<!-- 상품 상세 조회 -->
+	<select id="getProductDetail" parameterType="int" resultType="ProductVO">
+		select * from product 
+		where productId=#{productId}
+	</select>
+<!-- 상품 수정 -->
+	<update id="getProductUpdate" parameterType="ProductVO">
+		UPDATE product
+		SET
+		`title` = #{title},
+		`price` = #{price},
+		`content` = #{content},
+		`color` = #{color},
+		`brand` = #{brand},
+		`img` = #{img},
+		`multi_img` = #{multi_img},
+		`date` = now()
+		WHERE `productId` = #{productId}
+	</update>
+<!-- 상품 삭제 -->
+	<delete id="getProductDelete" parameterType="int">
+		DELETE FROM product WHERE productId = #{productId}
+	</delete>
+	<!-- 카테고리 리스트 조회 -->
+	<select id="categorySelect" resultType="ProductVO">
+		select title from category_1
+		union
+		select title from category_2
+		union
+		select title from category_3
+	</select>
+	
+	<select id="selectcate1" resultType="ProductVO">
+		select num, title
+		from
+		category_1
+	</select>
+	
+	<select id="selectcate2" resultType="ProductVO">
+		select b.num, b.title
+		from
+		category_1 as a 
+		join
+		category_2 as b
+		on
+		a.num = b.catenum
+
+	</select>
+	
+	<select id="selectcate3" resultType="ProductVO">
+		select c.num, c.title
+		from
+		category_2 as b 
+		join
+		category_3 as c
+		on
+		b.num = c.catenum
+	</select>
+	
+
+	
+
+</mapper>
